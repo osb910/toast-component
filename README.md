@@ -4,22 +4,6 @@ An implementation of a `<Toast>` message component.
 
 ![Screen recording showing 3 toast messages popping up from user input](./docs/toast-demo.gif)
 
-## Exercise 4: Context
-
-As it stands, all of our state has been managed by `ToastPlayground`. This works for our little demo app, but it wouldn't scale well in a real-world application!
-
-In this exercise, we'll refactor our application to use the [“Provider component” pattern](https://courses.joshwcomeau.com/joy-of-react/04-component-design/08.04-provider-component). It will own all of the state related to the toasts state, and make it available to any child component who requires it.
-
-**Acceptance Criteria:**
-
-- Create a new component, `ToastProvider`, that will serve as the “keeper” for all toast-related state.
-  - To generate a new component, you can use the “new-component” script! Try tunning `npm run new-component ToastProvider` in the terminal.
-- Components that require the state should pull it from context with the `useContext` hook, rather than passing through props.
-- As we saw in the [“Provider Components” lesson](https://courses.joshwcomeau.com/joy-of-react/04-component-design/08.04-provider-component), we can also share _functions_ that allow consumers to alter the state. Consider making functions available that will create a new toast, or dismiss a specific toast.
-- This is a “refactor” exercise. The user experience shouldn't change at all.
-
----
-
 ## Exercise 5: Keyboard and screen reader support
 
 Our component so far works pretty well for sighted mouse users, but the experience isn't as great for everyone else.

@@ -1,4 +1,3 @@
-import {useEffect, useState} from 'react';
 import {AlertOctagon, AlertTriangle, CheckCircle, Info, X} from 'react-feather';
 
 import VisuallyHidden from '../VisuallyHidden';

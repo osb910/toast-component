@@ -1,25 +1,27 @@
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useContext, useMemo, useState} from 'react';
 import Button from '../Button';
 
 import styles from './ToastPlayground.module.css';
 import ToastShelf from '../ToastShelf/ToastShelf';
 import useShortcuts from '../../hooks/use-shortcuts';
+import ToastContext from '../../lib/toast-context';
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 const ToastPlayground = () => {
   const [variant, setVariant] = useState(VARIANT_OPTIONS[0]);
   const [message, setMessage] = useState('');
-  const [toasts, setToasts] = useState([]);
-  const popToast = useCallback(() => {
-    if (!message) return;
-    setToasts(current => [
-      ...current,
-      {id: crypto.randomUUID(), variant, message},
-    ]);
-    setVariant(VARIANT_OPTIONS[0]);
-    setMessage('');
-  }, [message, variant]);
+  const {createToast} = useContext(ToastContext);
+  const popToast = useCallback(
+    evt => {
+      evt.preventDefault();
+      if (!message) return;
+      createToast(variant, message);
+      setVariant(VARIANT_OPTIONS[0]);
+      setMessage('');
+    },
+    [message, variant]
+  );
 
   const keyboardShortcuts = useMemo(() => {
     return [
@@ -41,7 +43,7 @@ const ToastPlayground = () => {
         <img alt='Cute toast mascot' src='/toast.png' />
         <h1>Toast Playground</h1>
       </header>
-      <ToastShelf toasts={toasts} setToasts={setToasts} />
+      <ToastShelf />
 
       <form className={styles.controlsWrapper} onSubmit={popToast}>
         <div className={styles.row}>
