@@ -1,7 +1,8 @@
 import {useEffect, useMemo} from 'react';
 
-const useShortcuts = (keyMap = []) => {
-  console.log('useShortcuts');
+const useHotKeys = (keyMap, ref) => {
+  const element = ref?.current ?? window;
+
   const hotKeyRegex = useMemo(
     () =>
       /((?:(?:[<>]|Left|Right)?(?:\B[!^+#]|(?:Alt|C(?:on)?tro?l|Shift|Win)[\s+]?))*)[\s+]?(.+)/i,
@@ -49,19 +50,24 @@ const useShortcuts = (keyMap = []) => {
       return {char, mods, run, universal};
     });
     const handleKeyDown = evt => {
+      evt.stopPropagation();
       const {key, code} = evt;
       for (let {char, mods, run, universal} of keyActions) {
-        const isKey = universal ? char === code : char === key;
-        if (isKey && mods.every(({modKey}) => evt.getModifierState(modKey))) {
+        const isHotKey = universal ? char === code : char === key;
+        if (
+          isHotKey &&
+          mods.every(({modKey}) => evt.getModifierState(modKey))
+        ) {
           run();
           break;
         }
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    element.addEventListener('keydown', handleKeyDown);
+    return () => element.removeEventListener('keydown', handleKeyDown);
   }, [
+    element,
     keyMap,
     hotKeyRegex,
     leftKeyRegex,
@@ -74,4 +80,4 @@ const useShortcuts = (keyMap = []) => {
   return null;
 };
 
-export default useShortcuts;
+export default useHotKeys;

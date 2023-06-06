@@ -1,9 +1,9 @@
-import {useCallback, useContext, useMemo, useState} from 'react';
+import {useCallback, useContext, useMemo, useRef, useState} from 'react';
 import Button from '../Button';
 
 import styles from './ToastPlayground.module.css';
 import ToastShelf from '../ToastShelf/ToastShelf';
-import useShortcuts from '../../hooks/use-shortcuts';
+import useHotKeys from '../../hooks/use-hotkeys';
 import ToastContext from '../../lib/toast-context';
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
@@ -11,16 +11,17 @@ const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 const ToastPlayground = () => {
   const [variant, setVariant] = useState(VARIANT_OPTIONS[0]);
   const [message, setMessage] = useState('');
+  const messageRef = useRef();
   const {createToast} = useContext(ToastContext);
   const popToast = useCallback(
     evt => {
-      evt.preventDefault();
+      evt?.preventDefault();
       if (!message) return;
       createToast(variant, message);
       setVariant(VARIANT_OPTIONS[0]);
       setMessage('');
     },
-    [message, variant]
+    [message, variant, createToast]
   );
 
   const keyboardShortcuts = useMemo(() => {
@@ -32,11 +33,11 @@ const ToastPlayground = () => {
       {
         hotKey: 'RightControl+Enter',
         run: () => popToast(),
-        universal: true,
       },
     ];
   }, [popToast]);
-  useShortcuts(keyboardShortcuts);
+  useHotKeys(keyboardShortcuts, messageRef);
+
   return (
     <div className={styles.wrapper}>
       <header>
@@ -60,6 +61,7 @@ const ToastPlayground = () => {
               className={styles.messageInput}
               onInput={evt => setMessage(evt.target.value)}
               value={message}
+              ref={messageRef}
             />
           </div>
         </div>
